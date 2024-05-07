@@ -91,15 +91,26 @@ class SimpleMonitor13(switch.SimpleSwitch13):
 
     
     def load_model(self):
-        # Load the model(s)
-        self.logger.info("Loading decision tree ...")
-        self.flow_model = joblib.load('decision_tree_model.pkl')
-
-        # self.logger.info("Loading random forest model ...")
-        # self.flow_model = joblib.load('random_forest_model.pkl')
-
-        # self.logger.info("Loading SVC ...")
-        # self.flow_model = joblib.load('svc_model.pkl')
+        self.logger.info("Loading decision_tree ...")
+        flow_dataset = pd.read_csv('../dataset/FlowStatsfile.csv')
+        flow_dataset.iloc[:, 2] = flow_dataset.iloc[:, 2].str.replace('.', '')
+        flow_dataset.iloc[:, 3] = flow_dataset.iloc[:, 3].str.replace('.', '')
+        flow_dataset.iloc[:, 5] = flow_dataset.iloc[:, 5].str.replace('.', '')
+        X_flow = flow_dataset.iloc[:, :-1].values.astype('float64')
+        y_flow = flow_dataset.iloc[:, -1].values
+        X_flow_train, X_flow_test, y_flow_train, y_flow_test = train_test_split(X_flow, y_flow, test_size=0.25, random_state=0)
+        classifier = RandomForestClassifier(n_estimators=10, criterion="entropy", random_state=0)
+        self.flow_model = classifier.fit(X_flow_train, y_flow_train)
+        y_flow_pred = self.flow_model.predict(X_flow_test)
+        # self.logger.info("------------------------------------------------------------------------------")
+        # self.logger.info("confusion matrix")
+        # cm = confusion_matrix(y_flow_test, y_flow_pred)
+        # self.logger.info(cm)
+        # acc = accuracy_score(y_flow_test, y_flow_pred)
+        # self.logger.info("succes accuracy = {0:.2f} %".format(acc*100))
+        # fail = 1.0 - acc
+        # self.logger.info("fail accuracy = {0:.2f} %".format(fail*100))
+        # self.logger.info("------------------------------------------------------------------------------")
 
 
 

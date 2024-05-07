@@ -1,0 +1,8 @@
+
+
+~/CNProj/controller$ ryu-manager ./controller.py
+
+
+~/CNProj/mininet$ sudo python ./topology.py
+
+mininet: h1 timeout 305 hping3 -2 -V -d 120 -w 64 --rand-source --flood h5
